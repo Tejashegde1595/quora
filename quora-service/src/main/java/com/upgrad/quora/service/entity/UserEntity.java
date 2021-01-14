@@ -73,7 +73,7 @@ public class UserEntity implements Serializable {
     @Size(max = 30)
     private String dob;
 
-    @JoinColumn(name = "ROLE")
+    @Column(name = "ROLE")
     private String role;
 
     @Column(name = "CONTACTNUMBER")
