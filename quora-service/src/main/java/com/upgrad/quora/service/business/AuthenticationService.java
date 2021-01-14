@@ -38,8 +38,6 @@ public class AuthenticationService {
             userAuthToken.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
             userAuthToken.setLoginAt(now);
             userAuthToken.setExpiresAt(expiresAt);
-            userAuthToken.setCreatedBy("api-backend");
-            userAuthToken.setCreatedAt(now);
 
             userDao.createAuthToken(userAuthToken);
             userDao.updateUser(userEntity);
