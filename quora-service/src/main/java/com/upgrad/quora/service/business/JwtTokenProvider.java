@@ -2,6 +2,7 @@ package com.upgrad.quora.service.business;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.common.GenericErrorCode;
 import com.upgrad.quora.service.common.UnexpectedException;
 
@@ -14,7 +15,6 @@ import java.util.UUID;
  * This class is used in the project to provide JWT token after successful authentication
  */
 public class JwtTokenProvider {
-    private static final String TOKEN_ISSUER = "https://quora.io";
 
     private final Algorithm algorithm;
 
@@ -45,9 +45,9 @@ public class JwtTokenProvider {
         final Date issuedAt = new Date(issuedDateTime.getLong(ChronoField.INSTANT_SECONDS));
         final Date expiresAt = new Date(expiresDateTime.getLong(ChronoField.INSTANT_SECONDS));
 
-        return JWT.create().withIssuer(TOKEN_ISSUER) //
+        return JWT.create().withIssuer(Constants.TOKEN_ISSUER)
                 .withKeyId(UUID.randomUUID().toString())
-                .withAudience(userUuid) //
+                .withAudience(userUuid)
                 .withIssuedAt(issuedAt).withExpiresAt(expiresAt).sign(algorithm);
     }
 
