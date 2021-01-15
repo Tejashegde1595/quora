@@ -16,7 +16,7 @@ import static com.upgrad.quora.service.common.GenericErrorCode.ATH_001;
 import static com.upgrad.quora.service.common.GenericErrorCode.ATH_002;
 
 @Service
-public class AuthenticationService {
+public class SigninAuthenticationService {
 
     @Autowired
     private UserDao userDao;
