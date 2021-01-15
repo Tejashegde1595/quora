@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+
+import static com.upgrad.quora.service.common.GenericErrorCode.SGOR_001;
+
 @Service
 public class SignoutBusinessService {
     @Autowired
@@ -26,11 +29,11 @@ public class SignoutBusinessService {
     }
 
 
-    public UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
+    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
             SignOutRestrictedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if (userAuthTokenEntity == null) {
-            throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
+            throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         return userAuthTokenEntity;
     }

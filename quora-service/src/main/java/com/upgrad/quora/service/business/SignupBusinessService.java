@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.upgrad.quora.service.common.GenericErrorCode.SGR_001;
-import static com.upgrad.quora.service.common.GenericErrorCode.SGR_002;
+import static com.upgrad.quora.service.common.GenericErrorCode.SGUR_001;
+import static com.upgrad.quora.service.common.GenericErrorCode.SGUR_002;
 
 @Service
 public class SignupBusinessService {
@@ -37,12 +37,12 @@ public class SignupBusinessService {
 
         UserEntity userEntity = userDao.getUserByUserName(user.getUserName());
         if (userEntity != null) {
-            throw new SignUpRestrictedException(SGR_001.getCode(), SGR_001.getDefaultMessage());
+            throw new SignUpRestrictedException(SGUR_001.getCode(), SGUR_001.getDefaultMessage());
         }
 
         userEntity = userDao.getUserByEmail(user.getEmailAddress());
         if (userEntity != null) {
-            throw new SignUpRestrictedException(SGR_002.getCode(), SGR_002.getDefaultMessage());
+            throw new SignUpRestrictedException(SGUR_002.getCode(), SGUR_002.getDefaultMessage());
         }
 
     }

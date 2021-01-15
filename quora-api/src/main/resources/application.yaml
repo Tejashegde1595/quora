@@ -23,4 +23,7 @@ spring:
 
 user:
   default:
+    role: nonadmin
+
+  admin:
     role: admin

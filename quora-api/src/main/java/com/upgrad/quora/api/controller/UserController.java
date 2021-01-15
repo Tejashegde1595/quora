@@ -4,7 +4,7 @@ import com.upgrad.quora.api.model.SigninResponse;
 import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
-import com.upgrad.quora.service.business.AuthenticationService;
+import com.upgrad.quora.service.business.SigninAuthenticationService;
 import com.upgrad.quora.service.business.SignoutBusinessService;
 import com.upgrad.quora.service.business.SignupBusinessService;
 import com.upgrad.quora.service.business.UserAdminBusinessService;
@@ -30,6 +30,7 @@ import java.util.Base64;
 import java.util.UUID;
 
 import static com.upgrad.quora.service.common.GenericErrorCode.ATH_001;
+import static com.upgrad.quora.service.common.GenericErrorCode.SGOR_001;
 
 @RestController
 @RequestMapping("/user")
@@ -40,7 +41,7 @@ public class UserController {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private AuthenticationService authenticationService;
+    private SigninAuthenticationService signinAuthenticationService;
     @Autowired
     private SignupBusinessService signupBusinessService;
     @Autowired
@@ -66,7 +67,7 @@ public class UserController {
             String decodedText = new String(decode);
             String[] decodedArray = decodedText.split(":");
 
-            UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0], decodedArray[1]);
+            UserAuthTokenEntity userAuthToken = signinAuthenticationService.authenticate(decodedArray[0], decodedArray[1]);
 
             SigninResponse signinResponse = new SigninResponse().id(userAuthToken.getUuid()).message(Constants.LOGIN_MESSAGE);
 
@@ -83,7 +84,7 @@ public class UserController {
 
         String[] bearerToken = authorization.split(Constants.TOKEN_PREFIX);
         if (bearerToken.length != 2) {
-            throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
+            throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         final UserEntity user = signoutBusinessService.signoutUser(bearerToken[1]);
 
