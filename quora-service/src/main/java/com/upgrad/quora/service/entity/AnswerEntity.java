@@ -30,13 +30,13 @@ public class AnswerEntity {
     @Column(name = "DATE")
     private ZonedDateTime date;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "USER_ID")
-    private UserEntity user;
+    private UserEntity user_id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
-    private QuestionEntity question;
+    private QuestionEntity question_id;
 
     public Integer getId() {
         return id;
@@ -70,19 +70,19 @@ public class AnswerEntity {
         this.date = date;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public UserEntity getUser_Id() {
+        return user_id;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setUser_Id(UserEntity user) {
+        this.user_id = user_id;
     }
 
-    public QuestionEntity getQuestion() {
-        return question;
+    public QuestionEntity getQuestion_Id() {
+        return question_id;
     }
 
-    public void setQuestion(QuestionEntity questionEntity) {
-        this.question = questionEntity;
+    public void setQuestion_Id(QuestionEntity questionEntity) {
+        this.question_id = questionEntity;
     }
 }
