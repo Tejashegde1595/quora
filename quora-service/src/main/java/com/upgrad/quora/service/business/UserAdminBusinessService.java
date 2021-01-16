@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -27,7 +28,15 @@ public class UserAdminBusinessService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+
+        String bearerToken = "";
+        try {
+            bearerToken = authorizationToken.split(Constants.TOKEN_PREFIX)[1];
+        } catch (Exception e) {
+            throw new AuthorizationFailedException(ATHR_001_ADMIN.getCode(), ATHR_001_ADMIN.getDefaultMessage());
+        }
+
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(bearerToken);
         /*  UserEntity user = userAuthTokenEntity.getUser();
             if (userAuthTokenEntity == null || !user.getUuid().equals(uuid)) {*/
         if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
