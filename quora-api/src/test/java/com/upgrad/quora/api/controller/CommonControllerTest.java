@@ -1,4 +1,4 @@
-/*package com.upgrad.quora.api.controller;
+package com.upgrad.quora.api.controller;
 
 
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class CommonControllerTest {
     //This test case passes when you try to get the details of the existing user and the JWT token entered exists in the database and the user corresponding to that JWT token is signed in.
     @Test
     public void details() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/userprofile/database_uuid1").header("authorization", "database_accesstoken"))
+        mvc.perform(MockMvcRequestBuilders.get("/userprofile/database_uuid1").header("authorization", "Bearer database_accesstoken1"))
                 .andExpect(status().isOk());
     }
 
@@ -39,9 +39,8 @@ public class CommonControllerTest {
     //This test case passes when you try to get the details of the user which does not exist in the database.
     @Test
     public void detailsOfNonExistingUser() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/userprofile/non_existing_user").header("authorization", "database_accesstoken"))
+        mvc.perform(MockMvcRequestBuilders.get("/userprofile/non_existing_user").header("authorization", "Bearer database_accesstoken"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("USR-001"));
     }
 }
-*/

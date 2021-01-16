@@ -6,7 +6,7 @@ server:
 spring:
 
   application:
-    name:
+    name: quora-api
 
   datasource:
     driverClassName: org.postgresql.Driver
@@ -20,3 +20,10 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+
+user:
+  default:
+    role: nonadmin
+
+  admin:
+    role: admin
