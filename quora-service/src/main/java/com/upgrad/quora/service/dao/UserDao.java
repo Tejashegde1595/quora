@@ -50,6 +50,11 @@ public class UserDao {
         return userAuthTokenEntity;
     }
 
+    public UserAuthTokenEntity updateAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
+        entityManager.merge(userAuthTokenEntity);
+        return userAuthTokenEntity;
+    }
+
     public void updateUser(final UserEntity updatedUserEntity) {
         entityManager.merge(updatedUserEntity);
     }
@@ -62,7 +67,9 @@ public class UserDao {
 
             return null;
         }
-
     }
 
+    public void deleteUser(final UserEntity userEntity) {
+        entityManager.remove(userEntity);
+    }
 }
