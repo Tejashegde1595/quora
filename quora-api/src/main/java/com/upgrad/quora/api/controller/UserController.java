@@ -26,11 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Base64;
 import java.util.UUID;
-
-import static com.upgrad.quora.service.common.GenericErrorCode.ATH_001;
-import static com.upgrad.quora.service.common.GenericErrorCode.SGOR_001;
 
 @RestController
 @RequestMapping("/user")
@@ -62,31 +58,21 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SigninResponse> signin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
-        try {
-            byte[] decode = Base64.getDecoder().decode(authorization.split(Constants.HEADER_STRING)[1]);
-            String decodedText = new String(decode);
-            String[] decodedArray = decodedText.split(":");
 
-            UserAuthTokenEntity userAuthToken = signinAuthenticationService.authenticate(decodedArray[0], decodedArray[1]);
+        UserAuthTokenEntity userAuthToken = signinAuthenticationService.authenticate(authorization);
 
-            SigninResponse signinResponse = new SigninResponse().id(userAuthToken.getUuid()).message(Constants.LOGIN_MESSAGE);
+        SigninResponse signinResponse = new SigninResponse().id(userAuthToken.getUuid()).message(Constants.LOGIN_MESSAGE);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("access-token", userAuthToken.getAccessToken());
-            return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new AuthenticationFailedException(ATH_001.getCode(), ATH_001.getDefaultMessage());
-        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("access-token", userAuthToken.getAccessToken());
+        return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
+
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException {
 
-        String[] bearerToken = authorization.split(Constants.TOKEN_PREFIX);
-        if (bearerToken.length != 2) {
-            throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        final UserEntity user = signoutBusinessService.signoutUser(bearerToken[1]);
+        final UserEntity user = signoutBusinessService.signoutUser(authorization);
 
         SignoutResponse signoutResponse = new SignoutResponse().id(user.getUuid()).message(Constants.LOGOUT_MESSAGE);
         return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
