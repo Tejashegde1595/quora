@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -19,14 +20,21 @@ public class UserCommonBusinessService {
 
     public UserEntity getUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+        String bearerToken = "";
+        try {
+            bearerToken = authorizationToken.split(Constants.TOKEN_PREFIX)[1];
+        } catch (Exception e) {
+            throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
+        }
+
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(bearerToken);
         /*  UserEntity user = userAuthTokenEntity.getUser();
             if (userAuthTokenEntity == null || !user.getUuid().equals(uuid)) {*/
         if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null && userAuthTokenEntity.getLogoutAt().isBefore(userAuthTokenEntity.getLoginAt())) {
+        if (userAuthTokenEntity.getLogoutAt() != null && userAuthTokenEntity.getLogoutAt().isAfter(userAuthTokenEntity.getLoginAt())) {
             throw new AuthorizationFailedException(ATHR_002_COMMON.getCode(), ATHR_002_COMMON.getDefaultMessage());
         }
         UserEntity userEntity = userDao.getUser(uuid);
