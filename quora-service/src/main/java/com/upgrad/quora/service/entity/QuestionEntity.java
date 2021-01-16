@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -16,6 +18,7 @@ import java.time.ZonedDateTime;
 @NamedQueries(
         {
                 @NamedQuery(name = "questionByUserId", query = "select q from QuestionEntity q where q.user.uuid = :uuid"),
+                @NamedQuery(name = "questionById", query = "select q from QuestionEntity q where q.uuid = :uuid")
         }
 )
 public class QuestionEntity implements Serializable {
@@ -37,6 +40,7 @@ public class QuestionEntity implements Serializable {
 
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
 
