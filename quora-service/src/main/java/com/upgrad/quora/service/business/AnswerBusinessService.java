@@ -49,8 +49,8 @@ public class AnswerBusinessService {
         if(questionEntity == null) {
             throw new InvalidQuestionException(QUES_001.getCode(), QUES_001.getDefaultMessage());
         }
-        answerEntity.setQuestion_Id(questionEntity);
-        answerEntity.setUser_Id(userAuthTokenEntity.getUser());
+        answerEntity.setQuestion(questionEntity);
+        answerEntity.setUser(userAuthTokenEntity.getUser());
         return answerDao.createAnswer(answerEntity);
     }
 
@@ -71,7 +71,7 @@ public class AnswerBusinessService {
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(existingAnswer.getUser_Id() != userAuthToken.getUser()) {
+        if(existingAnswer.getUser() != userAuthToken.getUser()) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
         existingAnswer.setAnswer(answerEntity.toString());
@@ -85,7 +85,7 @@ public class AnswerBusinessService {
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(existingAnswer.getUser_Id()!=userAuthToken.getUser() || userAuthToken.getUser().getRole().equals("admin")) {
+        if(existingAnswer.getUser()!=userAuthToken.getUser() || userAuthToken.getUser().getRole().equals("admin")) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
         return answerDao.deleteAnswer(answerId);

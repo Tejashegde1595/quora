@@ -63,7 +63,7 @@ public class AnswerDao {
 
     public AnswerEntity getQuestionId(final String questionId) {
         try {
-            return entityManager.createNamedQuery("getQuestionById", AnswerEntity.class).setParameter("question_id", questionId).getSingleResult();
+            return entityManager.createNamedQuery("getQuestionById", AnswerEntity.class).setParameter("question", questionId).getSingleResult();
         }
         catch(NoResultException nre) {
             return null;

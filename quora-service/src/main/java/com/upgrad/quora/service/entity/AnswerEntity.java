@@ -1,5 +1,8 @@
 package com.upgrad.quora.service.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,9 +11,9 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name = "getAnswerById", query = "SELECT ans FROM AnswerEntity ans WHERE uuid=:uuid"),
+        @NamedQuery(name = "getAnswerById", query = "SELECT ans FROM AnswerEntity ans WHERE ans.uuid=:uuid"),
         @NamedQuery(name = "getAllAnswersToQuestion", query = "select ans from AnswerEntity ans"),
-        @NamedQuery(name = "getQuestionById", query = "select ans from AnswerEntity ans WHERE question_id=:question_id")
+        @NamedQuery(name = "getQuestionById", query = "select ans from AnswerEntity ans WHERE ans.question=:question")
 })
 public class AnswerEntity {
 
@@ -24,21 +27,24 @@ public class AnswerEntity {
     @NotNull
     private String uuid;
 
-    @Column(name = "ANSWER")
+    @Column(name = "ANS")
     @Size(max = 255)
     @NotNull
     private String answer;
 
     @Column(name = "DATE")
+    @NotNull
     private ZonedDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    private UserEntity user_id;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
-    private QuestionEntity question_id;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private QuestionEntity question;
 
     public Integer getId() {
         return id;
@@ -72,19 +78,19 @@ public class AnswerEntity {
         this.date = date;
     }
 
-    public UserEntity getUser_Id() {
-        return user_id;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUser_Id(UserEntity user) {
-        this.user_id = user_id;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
-    public QuestionEntity getQuestion_Id() {
-        return question_id;
+    public QuestionEntity getQuestion() {
+        return question;
     }
 
-    public void setQuestion_Id(QuestionEntity questionEntity) {
-        this.question_id = questionEntity;
+    public void setQuestion(QuestionEntity questionEntity) {
+        this.question = questionEntity;
     }
 }
