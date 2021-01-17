@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -29,10 +30,12 @@ public class QuestionEntity implements Serializable {
 
     @Column(name = "UUID")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @Column(name = "CONTENT")
     @Size(max=500)
+    @NotNull
     private String content;
 
     @Column(name="DATE")
