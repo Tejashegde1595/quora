@@ -1,9 +1,7 @@
 package com.upgrad.quora.service.common;
 
 public class Constants {
-    public static final String SECRET = "SecretKeyToGenJWTs";
     public static final long EXPIRATION_TIME = 8;
-    public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Basic ";
     public static final String TOKEN_ISSUER = "https://quora.io";
     public static final String LOGIN_MESSAGE = "SIGNED IN SUCCESSFULLY";

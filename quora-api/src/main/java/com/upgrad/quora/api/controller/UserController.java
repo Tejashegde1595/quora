@@ -37,6 +37,11 @@ public class UserController {
     @Value("${user.default.role}")
     private String defaultRole;
 
+    /**
+     * @param signupUserRequest
+     * @return
+     * @throws SignUpRestrictedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> userSignup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
         final UserEntity userEntity = convertToUserEntity(signupUserRequest);
@@ -46,6 +51,11 @@ public class UserController {
     }
 
 
+    /**
+     * @param authorization
+     * @return
+     * @throws AuthenticationFailedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SigninResponse> signin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
@@ -60,6 +70,11 @@ public class UserController {
 
     }
 
+    /**
+     * @param authorization
+     * @return
+     * @throws SignOutRestrictedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException {
 
@@ -69,6 +84,10 @@ public class UserController {
         return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
     }
 
+    /**
+     * @param signupUserRequest
+     * @return
+     */
     private UserEntity convertToUserEntity(final SignupUserRequest signupUserRequest) {
         UserEntity userEntity = modelMapper.map(signupUserRequest, UserEntity.class);
         userEntity.setUuid(UUID.randomUUID().toString());
