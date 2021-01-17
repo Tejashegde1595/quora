@@ -20,21 +20,13 @@ public class UserCommonBusinessService {
 
     public UserEntity getUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
-        String bearerToken = "";
-        try {
-            bearerToken = authorizationToken.split(Constants.TOKEN_PREFIX)[1];
-        } catch (Exception e) {
-            throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
-        }
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(bearerToken);
-        /*  UserEntity user = userAuthTokenEntity.getUser();
-            if (userAuthTokenEntity == null || !user.getUuid().equals(uuid)) {*/
         if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null && userAuthTokenEntity.getLogoutAt().isAfter(userAuthTokenEntity.getLoginAt())) {
+        if (userAuthTokenEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException(ATHR_002_COMMON.getCode(), ATHR_002_COMMON.getDefaultMessage());
         }
         UserEntity userEntity = userDao.getUser(uuid);

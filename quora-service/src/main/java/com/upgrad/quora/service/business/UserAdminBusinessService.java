@@ -29,21 +29,13 @@ public class UserAdminBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
-        String bearerToken = "";
-        try {
-            bearerToken = authorizationToken.split(Constants.TOKEN_PREFIX)[1];
-        } catch (Exception e) {
-            throw new AuthorizationFailedException(ATHR_001_ADMIN.getCode(), ATHR_001_ADMIN.getDefaultMessage());
-        }
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(bearerToken);
-        /*  UserEntity user = userAuthTokenEntity.getUser();
-            if (userAuthTokenEntity == null || !user.getUuid().equals(uuid)) {*/
         if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_ADMIN.getCode(), ATHR_001_ADMIN.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null && userAuthTokenEntity.getLogoutAt().isBefore(userAuthTokenEntity.getLoginAt())) {
+        if (userAuthTokenEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException(ATHR_002_ADMIN.getCode(), ATHR_002_ADMIN.getDefaultMessage());
         }
 
@@ -51,7 +43,7 @@ public class UserAdminBusinessService {
         if (userEntity == null) {
             throw new UserNotFoundException(USR_001_ADMIN.getCode(), USR_001_ADMIN.getDefaultMessage());
         }
-        if (!userEntity.getRole().equals(adminRole)) {
+        if (!userAuthTokenEntity.getUser().getRole().equals(adminRole)) {
             throw new AuthorizationFailedException(ATHR_003_ADMIN.getCode(), ATHR_003_ADMIN.getDefaultMessage());
         }
 
