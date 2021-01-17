@@ -1,18 +1,25 @@
 package com.upgrad.quora.service.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name = "getAnswerById", query = "SELECT ans FROM AnswerEntity ans WHERE uuid=:uuid"),
-        @NamedQuery(name = "getAllAnswersToQuestion", query = "select ans from AnswerEntity ans"),
-        @NamedQuery(name = "getQuestionById", query = "select ans from AnswerEntity ans WHERE question_id=:question_id")
+        @NamedQuery(name = "getAnswerById", query = "select ans from AnswerEntity ans where ans.uuid = :uuid"),
+        @NamedQuery(name = "getAllAnswersToQuestion", query = "select ans from AnswerEntity ans")
 })
-public class AnswerEntity {
+public class AnswerEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
@@ -24,7 +31,7 @@ public class AnswerEntity {
     @NotNull
     private String uuid;
 
-    @Column(name = "ANSWER")
+    @Column(name = "ANS")
     @Size(max = 255)
     @NotNull
     private String answer;
@@ -34,10 +41,12 @@ public class AnswerEntity {
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user_id;
 
     @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private QuestionEntity question_id;
 
     public Integer getId() {
@@ -86,5 +95,20 @@ public class AnswerEntity {
 
     public void setQuestion_Id(QuestionEntity questionEntity) {
         this.question_id = questionEntity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

@@ -30,8 +30,6 @@ public class AnswerController {
     @Autowired
     private ModelMapper modelMapper;
 
-
-
     /**
      * Create answer for a question
      *
@@ -62,12 +60,20 @@ public class AnswerController {
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> editAnswerContent(final AnswerEditRequest answerEditRequest, @PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
-        AnswerEntity answerEntity = convertEditAnswerEntity(answerEditRequest);
-        AnswerEntity updateAnswerEntity = answerBusinessService.editAnswer(authorization, answerId, answerEntity);
-        AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(answerEntity.getUuid()).status("ANSWER EDITED");
+        AnswerEntity updateAnswerEntity = answerBusinessService.editAnswer(authorization, answerId, answerEditRequest.getContent());
+        AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updateAnswerEntity.getUuid()).status("ANSWER EDITED");
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
     }
 
+    /**
+     * Delete an answer
+     *
+     * @param answerId
+     * @param authorization
+     * @return Response Entity for deleted answer
+     * @throws AuthorizationFailedException
+     * @throws AnswerNotFoundException
+     */
     @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEntity answerEntity = answerBusinessService.deleteAnswer(answerId, authorization);
@@ -75,6 +81,15 @@ public class AnswerController {
         return new  ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
     }
 
+    /**
+     * Fetch all answers for a question
+     *
+     * @param questionId
+     * @param authorization
+     * @return Response entity for all answers
+     * @throws AuthorizationFailedException
+     * @throws InvalidQuestionException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@PathVariable("questionId") String questionId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         List<AnswerEntity> answerEntityList = answerBusinessService.getAllAnswersToQuestion(questionId, authorization);
@@ -89,18 +104,16 @@ public class AnswerController {
         return new ResponseEntity<List<AnswerDetailsResponse>>(answerDetailsResponsesList, HttpStatus.OK);
     }
 
+    /**
+     * Private method to create and answer entity
+     *
+     * @param answerRequest
+     * @return Answer entity
+     */
     private AnswerEntity convertToAnswerEntity(final AnswerRequest answerRequest) {
         AnswerEntity answerEntity = modelMapper.map(answerRequest, AnswerEntity.class);
         answerEntity.setUuid(UUID.randomUUID().toString());
         answerEntity.setAnswer(answerRequest.getAnswer());
-        answerEntity.setDate(ZonedDateTime.now());
-        return answerEntity;
-    }
-
-    private AnswerEntity convertEditAnswerEntity(final AnswerEditRequest answerEditRequest) {
-        AnswerEntity answerEntity = modelMapper.map(answerEditRequest, AnswerEntity.class);
-        answerEntity.setUuid(UUID.randomUUID().toString());
-        answerEntity.setAnswer(answerEditRequest.getContent());
         answerEntity.setDate(ZonedDateTime.now());
         return answerEntity;
     }
