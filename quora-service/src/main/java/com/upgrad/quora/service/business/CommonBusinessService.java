@@ -1,6 +1,5 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -18,6 +17,13 @@ public class CommonBusinessService {
     @Autowired
     UserDao userDao;
 
+    /**
+     * @param uuid
+     * @param authorizationToken
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws UserNotFoundException
+     */
     public UserEntity getUser(final String uuid, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);

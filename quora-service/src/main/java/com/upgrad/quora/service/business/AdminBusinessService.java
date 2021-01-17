@@ -1,6 +1,5 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -26,6 +25,12 @@ public class AdminBusinessService {
     private UserDao userDao;
 
 
+    /**
+     * @param uuid
+     * @param authorizationToken
+     * @throws AuthorizationFailedException
+     * @throws UserNotFoundException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteUser(final String uuid,final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 

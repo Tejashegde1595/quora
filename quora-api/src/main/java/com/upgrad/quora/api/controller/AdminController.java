@@ -17,6 +17,13 @@ public class AdminController {
     @Autowired
     private AdminBusinessService adminBusinessService;
 
+    /**
+     * @param authorization
+     * @param uuid
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws UserNotFoundException
+     */
     @RequestMapping(method = RequestMethod.DELETE, value = "/user/{userId}")
     public ResponseEntity<UserDeleteResponse> deleteUser(@RequestHeader("authorization") final String authorization,
                                                          @PathVariable("userId") final String uuid) throws AuthorizationFailedException, UserNotFoundException {
