@@ -17,8 +17,6 @@ public enum GenericErrorCode implements ErrorCode {
     ATH_002("ATH-002", "Password failed"),
     ATHR_001_COMMON("ATHR-001", "User has not signed in"),
     ATHR_002_COMMON("ATHR-002", "User is signed out.Sign in first to get user details"),
-    ATHR_003_COMMON("ATHR-003", "Only the answer owner can edit the answer"),
-    ATHR_004_COMMON("ATHR-003", "Only the answer owner or admin can delete the answer"),
     USR_001_COMMON("USR-001", "User with entered uuid does not exist"),
     SGOR_001("SGR-001", "User is not Signed in"),
     ATHR_001_ADMIN("ATHR-001", "User has not signed in"),
@@ -34,6 +32,8 @@ public enum GenericErrorCode implements ErrorCode {
     ATHR_QSN_002_COMMON("ATHR-003", "Only the question owner can edit the question"),
     QSN_001("QUES-001","Entered question uuid does not exist"),
     QSN_USER_001("USR-001","User with entered uuid whose question details are to be seen does not exist"),
+    ATHR_003_COMMON("ATHR-003", "Only the answer owner can edit the answer"),
+    ATHR_004_COMMON("ATHR-003", "Only the answer owner or admin can delete the answer"),
     QUES_001("QUES-001", "The question entered is invalid"),
     ANS_USER_001("ANS-001", "Entered answer uuid does not exist");
     private static final Map<String, GenericErrorCode> LOOKUP = new HashMap<String, GenericErrorCode>();
