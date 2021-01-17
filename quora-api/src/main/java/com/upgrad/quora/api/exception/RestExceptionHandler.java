@@ -50,14 +50,15 @@ public class RestExceptionHandler {
     @ExceptionHandler(AnswerNotFoundException.class)
     public ResponseEntity<ErrorResponse> answerNotFoundException(AnswerNotFoundException exc, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(
-                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.NOT_FOUND
         );
     }
 
     @ExceptionHandler(InvalidQuestionException.class)
-    public ResponseEntity<ErrorResponse> usernotsignedinException(InvalidQuestionException exc, WebRequest request) {
+    public ResponseEntity<ErrorResponse> questionNotFoundException(InvalidQuestionException exc, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(
-                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.NOT_FOUND
         );
     }
+
 }
