@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -20,13 +21,12 @@ public class UserCommonBusinessService {
     public UserEntity getUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        /*  UserEntity user = userAuthTokenEntity.getUser();
-            if (userAuthTokenEntity == null || !user.getUuid().equals(uuid)) {*/
+
         if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null && userAuthTokenEntity.getLogoutAt().isBefore(userAuthTokenEntity.getLoginAt())) {
+        if (userAuthTokenEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException(ATHR_002_COMMON.getCode(), ATHR_002_COMMON.getDefaultMessage());
         }
         UserEntity userEntity = userDao.getUser(uuid);
