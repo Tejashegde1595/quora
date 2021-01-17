@@ -113,6 +113,11 @@ public class UserBussinessService {
     }
 
 
+    /**
+     * @param authorizationToken
+     * @return
+     * @throws SignOutRestrictedException
+     */
     private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
             SignOutRestrictedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
@@ -123,6 +128,10 @@ public class UserBussinessService {
     }
 
 
+    /**
+     * @param user
+     * @throws SignUpRestrictedException
+     */
     private void validateUserDetails(final UserEntity user) throws
             SignUpRestrictedException {
 
