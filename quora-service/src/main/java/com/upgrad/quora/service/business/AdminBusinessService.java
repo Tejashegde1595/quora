@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 import static com.upgrad.quora.service.common.GenericErrorCode.*;
 
 @Service
-public class UserAdminBusinessService {
+public class AdminBusinessService {
 
     @Value("${user.admin.role}")
     private String adminRole;
@@ -27,7 +27,7 @@ public class UserAdminBusinessService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
+    public void deleteUser(final String uuid,final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 

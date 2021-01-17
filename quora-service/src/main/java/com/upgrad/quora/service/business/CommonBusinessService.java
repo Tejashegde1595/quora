@@ -14,11 +14,11 @@ import java.time.ZonedDateTime;
 import static com.upgrad.quora.service.common.GenericErrorCode.*;
 
 @Service
-public class UserCommonBusinessService {
+public class CommonBusinessService {
     @Autowired
     UserDao userDao;
 
-    public UserEntity getUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
+    public UserEntity getUser(final String uuid, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 
