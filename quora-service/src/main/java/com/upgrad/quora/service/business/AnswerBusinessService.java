@@ -49,8 +49,8 @@ public class AnswerBusinessService {
         if(questionEntity == null) {
             throw new InvalidQuestionException(QUES_001.getCode(), QUES_001.getDefaultMessage());
         }
-        answerEntity.setQuestion_Id(questionEntity);
-        answerEntity.setUser_Id(userAuthTokenEntity.getUser());
+        answerEntity.setQuestion(questionEntity);
+        answerEntity.setUser(userAuthTokenEntity.getUser());
         return answerDao.createAnswer(answerEntity);
     }
 
@@ -59,22 +59,22 @@ public class AnswerBusinessService {
      *
      * @param authorization
      * @param answerId
-     * @param answerContent
+     * @param answerEntity
      * @return updated answer
      * @throws AuthorizationFailedException
      * @throws AnswerNotFoundException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public AnswerEntity editAnswer(final String authorization, final String answerId, final String answerContent) throws AuthorizationFailedException, AnswerNotFoundException {
+    public AnswerEntity editAnswer(final String authorization, final String answerId, final AnswerEntity answerEntity) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(!existingAnswer.getUser_Id().getUuid().equals(userAuthToken.getUser().getUuid())) {
+        if(existingAnswer.getUser() != userAuthToken.getUser()) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
-        existingAnswer.setAnswer(answerContent);
+        existingAnswer.setAnswer(answerEntity.toString());
         answerDao.updateAnswer(existingAnswer);
         return existingAnswer;
     }
@@ -94,7 +94,7 @@ public class AnswerBusinessService {
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(existingAnswer.getUser_Id()!=userAuthToken.getUser() || userAuthToken.getUser().getRole().equals("admin")) {
+        if(existingAnswer.getUser()!=userAuthToken.getUser() || userAuthToken.getUser().getRole().equals("admin")) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
         return answerDao.deleteAnswer(answerId);
@@ -111,9 +111,9 @@ public class AnswerBusinessService {
      */
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         checkUserAuth(authorization);
-        QuestionEntity question = questionDao.getQuestionById(questionId);
-        if (question == null) {
-            throw new InvalidQuestionException(QUES_002.getCode(), QUES_002.getDefaultMessage());
+        AnswerEntity answerEntity = answerDao.getQuestionId(questionId);
+        if (answerEntity == null) {
+            throw new InvalidQuestionException("QUES-001", "The question with entered uuid whose details are to be seen does not exist");
         }
         return answerDao.getAllAnswersToQuestion(questionId);
     }

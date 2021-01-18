@@ -1,9 +1,5 @@
 package com.upgrad.quora.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,7 +12,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name = "getAnswerById", query = "select ans from AnswerEntity ans where ans.uuid = :uuid"),
+        @NamedQuery(name = "getAnswerById", query = "SELECT ans FROM AnswerEntity ans WHERE ans.uuid=:uuid"),
         @NamedQuery(name = "getAllAnswersToQuestion", query = "select ans from AnswerEntity ans")
 })
 public class AnswerEntity implements Serializable {
@@ -37,17 +33,18 @@ public class AnswerEntity implements Serializable {
     private String answer;
 
     @Column(name = "DATE")
+    @NotNull
     private ZonedDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private UserEntity user_id;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private QuestionEntity question_id;
+    private QuestionEntity question;
 
     public Integer getId() {
         return id;
@@ -81,20 +78,20 @@ public class AnswerEntity implements Serializable {
         this.date = date;
     }
 
-    public UserEntity getUser_Id() {
-        return user_id;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUser_Id(UserEntity user) {
-        this.user_id = user_id;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
-    public QuestionEntity getQuestion_Id() {
-        return question_id;
+    public QuestionEntity getQuestion() {
+        return question;
     }
 
-    public void setQuestion_Id(QuestionEntity questionEntity) {
-        this.question_id = questionEntity;
+    public void setQuestion(QuestionEntity questionEntity) {
+        this.question = questionEntity;
     }
 
     @Override
