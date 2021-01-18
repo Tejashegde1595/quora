@@ -11,6 +11,7 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,9 @@ public class AnswerBusinessService {
     @Autowired
     private QuestionDao questionDao;
 
+    @Value("${user.admin.role}")
+    private String adminRole;
+
     /**
      * Business Logic to create a new answer
      *
@@ -46,11 +50,11 @@ public class AnswerBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(AnswerEntity answerEntity, final String authorization, final String questionId) throws InvalidQuestionException, AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = checkUserAuth(authorization);
-        if(userAuthTokenEntity.getLogoutAt() != null) {
+        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_CREATE_ANS.getCode(), ATHR_002_CREATE_ANS.getDefaultMessage());
         }
         QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
-        if(questionEntity == null) {
+        if (questionEntity == null) {
             throw new InvalidQuestionException(QUES_001.getCode(), QUES_001.getDefaultMessage());
         }
         answerEntity.setQuestion(questionEntity);
@@ -71,14 +75,14 @@ public class AnswerBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswer(final String authorization, final String answerId, final String answerContent) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
-        if(userAuthToken.getLogoutAt() != null) {
+        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_EDIT_ANS.getCode(), ATHR_002_EDIT_ANS.getDefaultMessage());
         }
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
-        if(existingAnswer == null) {
+        if (existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(existingAnswer.getUser() != userAuthToken.getUser()) {
+        if (existingAnswer.getUser() != userAuthToken.getUser()) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
         existingAnswer.setAnswer(answerContent);
@@ -97,15 +101,15 @@ public class AnswerBusinessService {
      */
     public AnswerEntity deleteAnswer(final String answerId, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
-        if(userAuthToken.getLogoutAt() != null) {
+        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_DEL_ANS.getCode(), ATHR_002_DEL_ANS.getDefaultMessage());
         }
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
-        if(existingAnswer == null) {
+        if (existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if(existingAnswer.getUser()!=userAuthToken.getUser() || userAuthToken.getUser().getRole().equals("admin")) {
-            throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
+        if (existingAnswer.getUser() != userAuthToken.getUser() || !userAuthToken.getUser().getRole().equals(adminRole)) {
+            throw new AuthorizationFailedException(ATHR_004_COMMON.getCode(), ATHR_004_COMMON.getDefaultMessage());
         }
         return answerDao.deleteAnswer(answerId);
     }
@@ -122,7 +126,7 @@ public class AnswerBusinessService {
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         checkUserAuth(authorization);
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
-        if(userAuthToken.getLogoutAt() != null) {
+        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_GET_ANS.getCode(), ATHR_002_GET_ANS.getDefaultMessage());
         }
         QuestionEntity question = questionDao.getQuestionById(questionId);
@@ -139,9 +143,9 @@ public class AnswerBusinessService {
      * @return Answer entity
      * @throws AuthorizationFailedException
      */
-    private UserAuthTokenEntity checkUserAuth(final String authorizationToken) throws AuthorizationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity= userDao.getUserAuthToken(authorizationToken);
-        if((userAuthTokenEntity == null) || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
+    private UserAuthTokenEntity checkUserAuth(final String authorizationToken) throws AuthorizationFailedException {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+        if ((userAuthTokenEntity == null) || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
         return userAuthTokenEntity;
