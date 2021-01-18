@@ -46,6 +46,9 @@ public class AnswerBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(AnswerEntity answerEntity, final String authorization, final String questionId) throws InvalidQuestionException, AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = checkUserAuth(authorization);
+        if(userAuthTokenEntity.getLogoutAt() != null) {
+            throw new AuthorizationFailedException(ATHR_002_CREATE_ANS.getCode(), ATHR_002_CREATE_ANS.getDefaultMessage());
+        }
         QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
         if(questionEntity == null) {
             throw new InvalidQuestionException(QUES_001.getCode(), QUES_001.getDefaultMessage());
@@ -68,6 +71,9 @@ public class AnswerBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswer(final String authorization, final String answerId, final String answerContent) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
+        if(userAuthToken.getLogoutAt() != null) {
+            throw new AuthorizationFailedException(ATHR_002_EDIT_ANS.getCode(), ATHR_002_EDIT_ANS.getDefaultMessage());
+        }
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
@@ -91,6 +97,9 @@ public class AnswerBusinessService {
      */
     public AnswerEntity deleteAnswer(final String answerId, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
+        if(userAuthToken.getLogoutAt() != null) {
+            throw new AuthorizationFailedException(ATHR_002_DEL_ANS.getCode(), ATHR_002_DEL_ANS.getDefaultMessage());
+        }
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
         if(existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
@@ -112,9 +121,13 @@ public class AnswerBusinessService {
      */
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         checkUserAuth(authorization);
+        UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
+        if(userAuthToken.getLogoutAt() != null) {
+            throw new AuthorizationFailedException(ATHR_002_GET_ANS.getCode(), ATHR_002_GET_ANS.getDefaultMessage());
+        }
         QuestionEntity question = questionDao.getQuestionById(questionId);
         if (question == null) {
-            throw new InvalidQuestionException(QUES_002.getCode(), QUES_002.getDefaultMessage());
+            throw new InvalidQuestionException(INVALID_QUES_001_GET_ANS.getCode(), INVALID_QUES_001_GET_ANS.getDefaultMessage());
         }
         return answerDao.getAllAnswersToQuestion(questionId);
     }
@@ -130,9 +143,6 @@ public class AnswerBusinessService {
         UserAuthTokenEntity userAuthTokenEntity= userDao.getUserAuthToken(authorizationToken);
         if((userAuthTokenEntity == null) || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
-        }
-        else if(userAuthTokenEntity.getLogoutAt() != null) {
-            throw new AuthorizationFailedException(ATHR_002_COMMON.getCode(), ATHR_002_COMMON.getDefaultMessage());
         }
         return userAuthTokenEntity;
     }
