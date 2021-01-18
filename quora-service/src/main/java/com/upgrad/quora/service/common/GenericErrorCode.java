@@ -35,6 +35,7 @@ public enum GenericErrorCode implements ErrorCode {
     ATHR_003_COMMON("ATHR-003", "Only the answer owner can edit the answer"),
     ATHR_004_COMMON("ATHR-003", "Only the answer owner or admin can delete the answer"),
     QUES_001("QUES-001", "The question entered is invalid"),
+    QUES_002("QUES-001", "The question with entered uuid whose details are to be seen does not exist"),
     ANS_USER_001("ANS-001", "Entered answer uuid does not exist");
 
     private static final Map<String, GenericErrorCode> LOOKUP = new HashMap<String, GenericErrorCode>();

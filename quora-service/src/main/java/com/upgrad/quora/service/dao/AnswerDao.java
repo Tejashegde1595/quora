@@ -49,6 +49,12 @@ public class AnswerDao {
         entityManager.merge(answerEntity);
     }
 
+    /**
+     * Method to delete an answer from db
+     *
+     * @param answerId
+     * @return deleted answer object
+     */
     public AnswerEntity deleteAnswer(final String answerId) {
         AnswerEntity deleteAnswer = getAnswerById(answerId);
         if (deleteAnswer != null) {
@@ -57,16 +63,13 @@ public class AnswerDao {
         return deleteAnswer;
     }
 
+    /**
+     * Method to retrieve all answers for a question from db
+     *
+     * @param questionId
+     * @return All answers present in db
+     */
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId) {
         return entityManager.createNamedQuery("getAllAnswersToQuestion", AnswerEntity.class).getResultList();
-    }
-
-    public AnswerEntity getQuestionId(final String questionId) {
-        try {
-            return entityManager.createNamedQuery("getQuestionById", AnswerEntity.class).setParameter("question", questionId).getSingleResult();
-        }
-        catch(NoResultException nre) {
-            return null;
-        }
     }
 }

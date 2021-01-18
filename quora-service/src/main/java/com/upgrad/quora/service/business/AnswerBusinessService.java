@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.upgrad.quora.service.common.GenericErrorCode.*;
@@ -59,13 +60,13 @@ public class AnswerBusinessService {
      *
      * @param authorization
      * @param answerId
-     * @param answerEntity
+     * @param answerContent
      * @return updated answer
      * @throws AuthorizationFailedException
      * @throws AnswerNotFoundException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public AnswerEntity editAnswer(final String authorization, final String answerId, final AnswerEntity answerEntity) throws AuthorizationFailedException, AnswerNotFoundException {
+    public AnswerEntity editAnswer(final String authorization, final String answerId, final String answerContent) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
         if(existingAnswer == null) {
@@ -74,11 +75,20 @@ public class AnswerBusinessService {
         if(existingAnswer.getUser() != userAuthToken.getUser()) {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
-        existingAnswer.setAnswer(answerEntity.toString());
+        existingAnswer.setAnswer(answerContent);
         answerDao.updateAnswer(existingAnswer);
         return existingAnswer;
     }
 
+    /**
+     * Business logic to delete an answer
+     *
+     * @param answerId
+     * @param authorization
+     * @return Deleted answer object
+     * @throws AuthorizationFailedException
+     * @throws AnswerNotFoundException
+     */
     public AnswerEntity deleteAnswer(final String answerId, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
         AnswerEntity existingAnswer = answerDao.getAnswerById(answerId);
@@ -91,18 +101,34 @@ public class AnswerBusinessService {
         return answerDao.deleteAnswer(answerId);
     }
 
+    /**
+     * Business logic to fetch all answers for a question
+     *
+     * @param questionId
+     * @param authorization
+     * @return List of all answers
+     * @throws AuthorizationFailedException
+     * @throws InvalidQuestionException
+     */
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         checkUserAuth(authorization);
-        AnswerEntity answerEntity = answerDao.getQuestionId(questionId);
-        if (answerEntity == null) {
-            throw new InvalidQuestionException("QUES-001", "The question with entered uuid whose details are to be seen does not exist");
+        QuestionEntity question = questionDao.getQuestionById(questionId);
+        if (question == null) {
+            throw new InvalidQuestionException(QUES_002.getCode(), QUES_002.getDefaultMessage());
         }
         return answerDao.getAllAnswersToQuestion(questionId);
     }
 
+    /**
+     * Private method to verify user authentication token
+     *
+     * @param authorizationToken
+     * @return Answer entity
+     * @throws AuthorizationFailedException
+     */
     private UserAuthTokenEntity checkUserAuth(final String authorizationToken) throws AuthorizationFailedException{
         UserAuthTokenEntity userAuthTokenEntity= userDao.getUserAuthToken(authorizationToken);
-        if(userAuthTokenEntity == null) {// || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
+        if((userAuthTokenEntity == null) || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
         else if(userAuthTokenEntity.getLogoutAt() != null) {
