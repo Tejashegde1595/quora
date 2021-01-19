@@ -8,4 +8,7 @@ public class Constants {
     public static final String LOGOUT_MESSAGE = "SIGNED OUT SUCCESSFULLY";
     public static final String USER_REGISTRATION_MESSAGE = "USER SUCCESSFULLY REGISTERED";
     public static final String DELETE_USER_MESSAGE = "USER SUCCESSFULLY DELETED";
+    public static final String CREATE_QUESTION_MESSAGE = "QUESTION CREATED";
+    public static final String DELETE_QUESTION_MESSAGE="QUESTION DELETED";
+    public static final String EDIT_QUESTION_MESSAGE="QUESTION EDITED";
 }
