@@ -98,7 +98,7 @@ public class AnswerController {
 
         while(iterator.hasNext()) {
             AnswerEntity answerEntity = iterator.next();
-            AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse().id(answerEntity.getUuid()).answerContent(answerEntity.getAnswer());
+            AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse().id(answerEntity.getUuid()).questionContent(answerEntity.getQuestion().getContent()).answerContent(answerEntity.getAnswer());
             answerDetailsResponsesList.add(answerDetailsResponse);
         }
         return new ResponseEntity<List<AnswerDetailsResponse>>(answerDetailsResponsesList, HttpStatus.OK);
