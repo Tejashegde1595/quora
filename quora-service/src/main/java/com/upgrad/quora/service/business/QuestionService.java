@@ -117,7 +117,7 @@ public class QuestionService {
     */
     private UserAuthTokenEntity checkUserAuth(final String authorizationToken) throws AuthorizationFailedException{
         UserAuthTokenEntity userAuthTokenEntity= userDao.getUserAuthToken(authorizationToken);
-        if(userAuthTokenEntity==null) {
+        if(userAuthTokenEntity==null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_001_COMMON.getCode(), ATHR_001_COMMON.getDefaultMessage());
         }
         return userAuthTokenEntity;
