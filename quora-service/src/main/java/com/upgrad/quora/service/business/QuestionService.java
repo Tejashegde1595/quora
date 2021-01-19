@@ -112,8 +112,8 @@ public class QuestionService {
         return questionDao.editQuestion(question);
     }
 
-    /*
-     * checks user authentication based on the authorizationToken
+
+     /* checks user authentication based on the authorizationToken
      * @param authorizationToken - authorizationToken to be checked for authentication and authorization
      * @throws AuthorizationFailedException - thrown if user does not exist or is signed out
      * @returns userAuthToken - UserAuthTokenEntity object for the authorizationToken
