@@ -99,6 +99,7 @@ public class AnswerBusinessService {
      * @throws AuthorizationFailedException
      * @throws AnswerNotFoundException
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity deleteAnswer(final String answerId, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthToken = checkUserAuth(authorization);
         if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
