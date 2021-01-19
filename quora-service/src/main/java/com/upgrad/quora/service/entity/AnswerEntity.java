@@ -45,7 +45,7 @@ public class AnswerEntity implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "QUESTION_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private QuestionEntity question;
