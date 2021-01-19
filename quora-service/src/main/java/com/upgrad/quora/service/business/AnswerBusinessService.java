@@ -108,7 +108,7 @@ public class AnswerBusinessService {
         if (existingAnswer == null) {
             throw new AnswerNotFoundException(ANS_USER_001.getCode(), ANS_USER_001.getDefaultMessage());
         }
-        if (existingAnswer.getUser() != userAuthToken.getUser() || !userAuthToken.getUser().getRole().equals(adminRole)) {
+        if (existingAnswer.getUser() != userAuthToken.getUser() && !userAuthToken.getUser().getRole().equals(adminRole)) {
             throw new AuthorizationFailedException(ATHR_004_COMMON.getCode(), ATHR_004_COMMON.getDefaultMessage());
         }
         return answerDao.deleteAnswer(answerId);
