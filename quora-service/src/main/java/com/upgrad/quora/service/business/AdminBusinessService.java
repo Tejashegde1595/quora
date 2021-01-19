@@ -36,11 +36,11 @@ public class AdminBusinessService {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 
-        if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
+        if (userAuthTokenEntity == null) {
             throw new AuthorizationFailedException(ATHR_001_ADMIN.getCode(), ATHR_001_ADMIN.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null) {
+        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_ADMIN.getCode(), ATHR_002_ADMIN.getDefaultMessage());
         }
 
