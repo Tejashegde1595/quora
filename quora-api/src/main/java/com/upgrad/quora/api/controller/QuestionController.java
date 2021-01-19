@@ -3,6 +3,7 @@ package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.QuestionService;
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -44,7 +45,7 @@ public class QuestionController {
     public ResponseEntity<QuestionResponse> createQuestion(final QuestionRequest questionRequest,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
         final QuestionEntity questionEntity = convertToQuestionEntity(questionRequest);
         final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity,authorization);
-        final QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid()).status("QUESTION CREATED");
+        final QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid()).status(Constants.CREATE_QUESTION_MESSAGE);
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
     }
     /*
@@ -81,7 +82,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.DELETE,path = "/delete/{questionId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionDeleteResponse> deleteQuestionById(@PathVariable("questionId") final String questionId,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         QuestionEntity questionEntity = questionService.deleteQuestionById(questionId,authorization);
-        QuestionDeleteResponse deleteResponse = new QuestionDeleteResponse().id(questionEntity.getUuid()).status("QUESTION DELETED");
+        QuestionDeleteResponse deleteResponse = new QuestionDeleteResponse().id(questionEntity.getUuid()).status(Constants.DELETE_QUESTION_MESSAGE);
         return new ResponseEntity<QuestionDeleteResponse>(deleteResponse,HttpStatus.OK);
     }
     /*
@@ -96,7 +97,7 @@ public class QuestionController {
     public ResponseEntity<QuestionEditResponse> editQuestionById(final QuestionEditRequest questionEditRequest,@PathVariable("questionId") final String questionId,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException{
         QuestionEntity questionEntity = convertToQuestionEntity(questionEditRequest);
         QuestionEntity cretedQuestionEntity=questionService.editQuestion(questionEntity,questionId,authorization);
-        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(cretedQuestionEntity.getUuid()).status("QUESTION EDITED");
+        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(cretedQuestionEntity.getUuid()).status(Constants.EDIT_QUESTION_MESSAGE);
         return new ResponseEntity<QuestionEditResponse>(questionEditResponse,HttpStatus.OK);
     }
     /*
