@@ -70,6 +70,6 @@ public class AnswerDao {
      * @return All answers present in db
      */
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId) {
-        return entityManager.createNamedQuery("getAllAnswersToQuestion", AnswerEntity.class).getResultList();
+        return entityManager.createNamedQuery("getAllAnswersToQuestion", AnswerEntity.class).setParameter("questionId",questionId).getResultList();
     }
 }
