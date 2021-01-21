@@ -17,7 +17,7 @@ public class AdminController {
     @Autowired
     private AdminBusinessService adminBusinessService;
 
-    /**
+    /** To delete an user
      * @param authorization
      * @param uuid
      * @return

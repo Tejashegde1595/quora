@@ -2,6 +2,7 @@ package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AnswerBusinessService;
+import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -44,7 +45,7 @@ public class AnswerController {
     public ResponseEntity<AnswerResponse> createAnswer(final AnswerRequest answerRequest, @PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws InvalidQuestionException, AuthorizationFailedException {
         final AnswerEntity answerEntity = convertToAnswerEntity(answerRequest);
         AnswerEntity createdAnswerEntity = answerBusinessService.createAnswer(answerEntity, authorization, questionId);
-        AnswerResponse answerResponse = new AnswerResponse().id(createdAnswerEntity.getUuid()).status("ANSWER CREATED");
+        AnswerResponse answerResponse = new AnswerResponse().id(createdAnswerEntity.getUuid()).status(Constants.CREATE_ANS_MESSAGE);
         return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.CREATED);
     }
 
@@ -61,7 +62,7 @@ public class AnswerController {
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> editAnswerContent(final AnswerEditRequest answerEditRequest, @PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEntity updateAnswerEntity = answerBusinessService.editAnswer(authorization, answerId, answerEditRequest.getContent());
-        AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updateAnswerEntity.getUuid()).status("ANSWER EDITED");
+        AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updateAnswerEntity.getUuid()).status(Constants.EDIT_ANS_MESSAGE);
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
     }
 
@@ -77,7 +78,7 @@ public class AnswerController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEntity answerEntity = answerBusinessService.deleteAnswer(answerId, authorization);
-        AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerEntity.getUuid()).status("ANSWER DELETED");
+        AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerEntity.getUuid()).status(Constants.DELETE_ANS_MESSAGE);
         return new  ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
     }
 

@@ -15,7 +15,7 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    /**
+    /** To persist user entity in db
      * @param userEntity
      * @return
      */
@@ -24,7 +24,7 @@ public class UserDao {
         return userEntity;
     }
 
-    /**
+    /** get an user from db based on user uuid
      * @param userUuid
      * @return
      */
@@ -37,7 +37,7 @@ public class UserDao {
         }
     }
 
-    /**
+    /** get an user from db based on user email
      * @param email
      * @return
      */
@@ -49,7 +49,7 @@ public class UserDao {
         }
     }
 
-    /**
+    /** get an user from db based on user name
      * @param UserName
      * @return
      */
@@ -61,7 +61,7 @@ public class UserDao {
         }
     }
 
-    /**
+    /** To persist user auth-token entity in db
      * @param userAuthTokenEntity
      * @return
      */
@@ -70,7 +70,7 @@ public class UserDao {
         return userAuthTokenEntity;
     }
 
-    /**
+    /** To update an already existing user auth-token entity in db
      * @param userAuthTokenEntity
      * @return
      */
@@ -79,7 +79,7 @@ public class UserDao {
         return userAuthTokenEntity;
     }
 
-    /**
+    /** get user auth-token entity from db based on token string
      * @param accessToken
      * @return
      */
@@ -92,7 +92,7 @@ public class UserDao {
         }
     }
 
-    /**
+    /** to remove an user from the user table
      * @param userEntity
      */
     public void deleteUser(final UserEntity userEntity) {

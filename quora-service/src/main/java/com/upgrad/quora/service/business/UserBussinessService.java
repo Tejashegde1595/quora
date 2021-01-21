@@ -26,7 +26,7 @@ public class UserBussinessService {
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
-    /**
+    /** Business logic to create an user based on sign-up request details
      * @param userEntity
      * @return
      * @throws SignUpRestrictedException
@@ -41,7 +41,7 @@ public class UserBussinessService {
 
     }
 
-    /**
+    /** Business logic for signing-in an user based on authentication
      * @param authorization
      * @return
      * @throws AuthenticationFailedException
@@ -76,7 +76,7 @@ public class UserBussinessService {
 
     }
 
-    /**
+    /** to create an user auth-token
      * @param userEntity
      * @param secret
      * @return
@@ -95,7 +95,7 @@ public class UserBussinessService {
         return userAuthToken;
     }
 
-    /**
+    /** Business logic to logout an already signed in user
      * @param authorization
      * @return
      * @throws SignOutRestrictedException
@@ -113,7 +113,7 @@ public class UserBussinessService {
     }
 
 
-    /**
+    /** To fetch user auth-token details
      * @param authorizationToken
      * @return
      * @throws SignOutRestrictedException
@@ -128,7 +128,7 @@ public class UserBussinessService {
     }
 
 
-    /**
+    /** method to validate user data for sign-up request
      * @param user
      * @throws SignUpRestrictedException
      */
