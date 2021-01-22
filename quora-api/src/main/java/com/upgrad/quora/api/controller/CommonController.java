@@ -20,7 +20,7 @@ public class CommonController {
     @Autowired
     ModelMapper modelMapper;
 
-    /**
+    /** To fetch the requested user details
      * @param userUuid
      * @param authorization
      * @return

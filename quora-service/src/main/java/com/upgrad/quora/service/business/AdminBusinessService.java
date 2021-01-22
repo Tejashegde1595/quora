@@ -25,7 +25,7 @@ public class AdminBusinessService {
     private UserDao userDao;
 
 
-    /**
+    /** delete requested user from db if the requestor is authorized
      * @param uuid
      * @param authorizationToken
      * @throws AuthorizationFailedException
