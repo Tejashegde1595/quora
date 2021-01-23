@@ -37,6 +37,11 @@ public class UserController {
     @Value("${user.default.role}")
     private String defaultRole;
 
+    /** To create an user based on sign-up request details
+     * @param signupUserRequest
+     * @return
+     * @throws SignUpRestrictedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> userSignup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
         final UserEntity userEntity = convertToUserEntity(signupUserRequest);
@@ -46,6 +51,11 @@ public class UserController {
     }
 
 
+    /** To sign-in an user based on authentication
+     * @param authorization
+     * @return
+     * @throws AuthenticationFailedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SigninResponse> signin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
@@ -55,11 +65,16 @@ public class UserController {
         SigninResponse signinResponse = new SigninResponse().id(userAuthToken.getUuid()).message(Constants.LOGIN_MESSAGE);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("access-token", userAuthToken.getAccessToken());
+        headers.add("access_token", userAuthToken.getAccessToken());
         return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
 
     }
 
+    /** To logout a signed in user
+     * @param authorization
+     * @return
+     * @throws SignOutRestrictedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException {
 
@@ -69,6 +84,10 @@ public class UserController {
         return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
     }
 
+    /** map the request object to user entity
+     * @param signupUserRequest
+     * @return
+     */
     private UserEntity convertToUserEntity(final SignupUserRequest signupUserRequest) {
         UserEntity userEntity = modelMapper.map(signupUserRequest, UserEntity.class);
         userEntity.setUuid(UUID.randomUUID().toString());

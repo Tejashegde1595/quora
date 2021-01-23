@@ -15,11 +15,19 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /** To persist user entity in db
+     * @param userEntity
+     * @return
+     */
     public UserEntity createUser(UserEntity userEntity) {
         entityManager.persist(userEntity);
         return userEntity;
     }
 
+    /** get an user from db based on user uuid
+     * @param userUuid
+     * @return
+     */
     public UserEntity getUser(final String userUuid) {
         try {
             return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", userUuid)
@@ -29,6 +37,10 @@ public class UserDao {
         }
     }
 
+    /** get an user from db based on user email
+     * @param email
+     * @return
+     */
     public UserEntity getUserByEmail(final String email) {
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
@@ -37,6 +49,10 @@ public class UserDao {
         }
     }
 
+    /** get an user from db based on user name
+     * @param UserName
+     * @return
+     */
     public UserEntity getUserByUserName(final String UserName) {
         try {
             return entityManager.createNamedQuery("userByUserName", UserEntity.class).setParameter("userName", UserName).getSingleResult();
@@ -45,21 +61,28 @@ public class UserDao {
         }
     }
 
+    /** To persist user auth-token entity in db
+     * @param userAuthTokenEntity
+     * @return
+     */
     public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
 
+    /** To update an already existing user auth-token entity in db
+     * @param userAuthTokenEntity
+     * @return
+     */
     public UserAuthTokenEntity updateAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         entityManager.merge(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
 
-    public void updateUser(final UserEntity updatedUserEntity) {
-        entityManager.merge(updatedUserEntity);
-    }
-
-
+    /** get user auth-token entity from db based on token string
+     * @param accessToken
+     * @return
+     */
     public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
         try {
             return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
@@ -69,6 +92,9 @@ public class UserDao {
         }
     }
 
+    /** to remove an user from the user table
+     * @param userEntity
+     */
     public void deleteUser(final UserEntity userEntity) {
         entityManager.remove(userEntity);
     }

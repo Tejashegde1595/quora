@@ -1,6 +1,5 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.service.common.Constants;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -17,7 +16,7 @@ import java.time.ZonedDateTime;
 import static com.upgrad.quora.service.common.GenericErrorCode.*;
 
 @Service
-public class UserAdminBusinessService {
+public class AdminBusinessService {
 
     @Value("${user.admin.role}")
     private String adminRole;
@@ -26,16 +25,22 @@ public class UserAdminBusinessService {
     private UserDao userDao;
 
 
+    /** delete requested user from db if the requestor is authorized
+     * @param uuid
+     * @param authorizationToken
+     * @throws AuthorizationFailedException
+     * @throws UserNotFoundException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteUser(String uuid, String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
+    public void deleteUser(final String uuid,final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
 
-        if (userAuthTokenEntity == null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
+        if (userAuthTokenEntity == null) {
             throw new AuthorizationFailedException(ATHR_001_ADMIN.getCode(), ATHR_001_ADMIN.getDefaultMessage());
         }
 
-        if (userAuthTokenEntity.getLogoutAt() != null) {
+        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthorizationFailedException(ATHR_002_ADMIN.getCode(), ATHR_002_ADMIN.getDefaultMessage());
         }
 
