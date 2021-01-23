@@ -17,7 +17,7 @@ public class CommonBusinessService {
     @Autowired
     UserDao userDao;
 
-    /**
+    /** Business logic to fetch user details
      * @param uuid
      * @param authorizationToken
      * @return

@@ -37,7 +37,7 @@ public class UserController {
     @Value("${user.default.role}")
     private String defaultRole;
 
-    /**
+    /** To create an user based on sign-up request details
      * @param signupUserRequest
      * @return
      * @throws SignUpRestrictedException
@@ -51,7 +51,7 @@ public class UserController {
     }
 
 
-    /**
+    /** To sign-in an user based on authentication
      * @param authorization
      * @return
      * @throws AuthenticationFailedException
@@ -65,12 +65,12 @@ public class UserController {
         SigninResponse signinResponse = new SigninResponse().id(userAuthToken.getUuid()).message(Constants.LOGIN_MESSAGE);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("access-token", userAuthToken.getAccessToken());
+        headers.add("access_token", userAuthToken.getAccessToken());
         return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
 
     }
 
-    /**
+    /** To logout a signed in user
      * @param authorization
      * @return
      * @throws SignOutRestrictedException
@@ -84,7 +84,7 @@ public class UserController {
         return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
     }
 
-    /**
+    /** map the request object to user entity
      * @param signupUserRequest
      * @return
      */

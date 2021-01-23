@@ -11,4 +11,7 @@ public class Constants {
     public static final String CREATE_QUESTION_MESSAGE = "QUESTION CREATED";
     public static final String DELETE_QUESTION_MESSAGE="QUESTION DELETED";
     public static final String EDIT_QUESTION_MESSAGE="QUESTION EDITED";
+    public static final String CREATE_ANS_MESSAGE = "ANSWER CREATED";
+    public static final String DELETE_ANS_MESSAGE="ANSWER DELETED";
+    public static final String EDIT_ANS_MESSAGE="ANSWER EDITED";
 }
