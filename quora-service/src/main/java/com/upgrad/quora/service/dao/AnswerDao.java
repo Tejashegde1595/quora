@@ -29,6 +29,7 @@ public class AnswerDao {
     public AnswerEntity createAnswer(AnswerEntity answerEntity) {
         log.info("creating a new answer in the database");
         entityManager.persist(answerEntity);
+        log.info("Succesfully created a new answer in the database");
         return answerEntity;
     }
 
@@ -44,6 +45,7 @@ public class AnswerDao {
             return entityManager.createNamedQuery("getAnswerById", AnswerEntity.class).setParameter("uuid", answerId).getSingleResult();
         }
         catch (NoResultException nre) {
+            log.info("answer with id not present");
             return null;
         }
     }
@@ -56,6 +58,7 @@ public class AnswerDao {
     public void updateAnswer(AnswerEntity answerEntity) {
         log.info("updating an answer in the database");
         entityManager.merge(answerEntity);
+        log.info("succesfully updated an answer in the database");
     }
 
     /**
@@ -69,6 +72,7 @@ public class AnswerDao {
         AnswerEntity deleteAnswer = getAnswerById(answerId);
         if (deleteAnswer != null) {
             entityManager.remove(deleteAnswer);
+            log.info("successfully deleted an answer in the database");
         }
         return deleteAnswer;
     }

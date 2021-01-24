@@ -24,6 +24,7 @@ public class UserDao {
     public UserEntity createUser(UserEntity userEntity) {
         log.info("create a new user in the database");
         entityManager.persist(userEntity);
+        log.info("succesfully created a new user in the database");
         return userEntity;
     }
 
@@ -37,6 +38,7 @@ public class UserDao {
             return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", userUuid)
                     .getSingleResult();
         } catch (NoResultException nre) {
+            log.info("no user present in the database with the User id");
             return null;
         }
     }
@@ -50,6 +52,7 @@ public class UserDao {
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
         } catch (NoResultException nre) {
+            log.info("no user present in the database with the User email");
             return null;
         }
     }
@@ -63,6 +66,7 @@ public class UserDao {
         try {
             return entityManager.createNamedQuery("userByUserName", UserEntity.class).setParameter("userName", UserName).getSingleResult();
         } catch (NoResultException nre) {
+            log.info("no user present in the database with the User Name");
             return null;
         }
     }
@@ -74,6 +78,7 @@ public class UserDao {
     public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         log.info("creating user-auth token entity in database");
         entityManager.persist(userAuthTokenEntity);
+        log.info("succesffully created user-auth token entity in database");
         return userAuthTokenEntity;
     }
 
@@ -84,6 +89,7 @@ public class UserDao {
     public UserAuthTokenEntity updateAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         log.info("updating user-auth token entity in database");
         entityManager.merge(userAuthTokenEntity);
+        log.info("succesfully updated user-auth token entity in database");
         return userAuthTokenEntity;
     }
 
@@ -96,7 +102,7 @@ public class UserDao {
         try {
             return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
         } catch (NoResultException nre) {
-
+            log.info("no user auth token present in the database with the following access token");
             return null;
         }
     }
@@ -107,5 +113,6 @@ public class UserDao {
     public void deleteUser(final UserEntity userEntity) {
         log.info("remove an user from the database");
         entityManager.remove(userEntity);
+        log.info("succesfully removed an user from the database");
     }
 }

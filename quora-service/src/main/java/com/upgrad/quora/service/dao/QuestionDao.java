@@ -24,6 +24,7 @@ public class QuestionDao {
     public QuestionEntity createQuestion(QuestionEntity questionEntity){
         log.info("creating a new question in the database");
         entityManager.persist(questionEntity);
+        log.info("succesfully created a new question in the database");
         return questionEntity;
     }
 
@@ -34,6 +35,7 @@ public class QuestionDao {
         log.info("getting all questions from the database");
         TypedQuery<QuestionEntity> query = entityManager.createQuery("Select q from QuestionEntity q",QuestionEntity.class);
         List<QuestionEntity> questionList = query.getResultList();
+        log.info("succesfully got all questions from the database");
         return questionList;
     }
     /*
@@ -53,6 +55,7 @@ public class QuestionDao {
         try {
             return entityManager.createNamedQuery("questionById", QuestionEntity.class).setParameter("uuid", questionId).getSingleResult();
         }catch (NoResultException nre){
+            log.info("no question in the database with the following Question Id");
             return null;
         }
     }
@@ -63,6 +66,7 @@ public class QuestionDao {
     public QuestionEntity deleteQuestion(QuestionEntity questionEntity){
         log.info("deleting a question from the database");
         entityManager.remove(questionEntity);
+        log.info("successfully deleted a question from the database");
         return questionEntity;
     }
     /*
@@ -72,6 +76,7 @@ public class QuestionDao {
     public QuestionEntity editQuestion(QuestionEntity questionEntity){
         log.info("updating a question in the database");
         entityManager.merge(questionEntity);
+        log.info("succesfully updated a question in the database");
         return questionEntity;
     }
 }
