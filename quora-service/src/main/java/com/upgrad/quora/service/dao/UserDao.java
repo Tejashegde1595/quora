@@ -2,6 +2,8 @@ package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -11,7 +13,7 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class UserDao {
 
-
+    private final Logger log = LoggerFactory.getLogger(UserDao.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -20,6 +22,7 @@ public class UserDao {
      * @return
      */
     public UserEntity createUser(UserEntity userEntity) {
+        log.info("create a new user in the database");
         entityManager.persist(userEntity);
         return userEntity;
     }
@@ -29,6 +32,7 @@ public class UserDao {
      * @return
      */
     public UserEntity getUser(final String userUuid) {
+        log.info("get an user from the database based on User id");
         try {
             return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", userUuid)
                     .getSingleResult();
@@ -42,6 +46,7 @@ public class UserDao {
      * @return
      */
     public UserEntity getUserByEmail(final String email) {
+        log.info("get an user from the database based on User Email");
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
         } catch (NoResultException nre) {
@@ -54,6 +59,7 @@ public class UserDao {
      * @return
      */
     public UserEntity getUserByUserName(final String UserName) {
+        log.info("get an user from the database based on User Name");
         try {
             return entityManager.createNamedQuery("userByUserName", UserEntity.class).setParameter("userName", UserName).getSingleResult();
         } catch (NoResultException nre) {
@@ -66,6 +72,7 @@ public class UserDao {
      * @return
      */
     public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
+        log.info("creating user-auth token entity in database");
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
@@ -75,6 +82,7 @@ public class UserDao {
      * @return
      */
     public UserAuthTokenEntity updateAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
+        log.info("updating user-auth token entity in database");
         entityManager.merge(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
@@ -84,6 +92,7 @@ public class UserDao {
      * @return
      */
     public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
+        log.info("get user-auth token entity from database based on the token");
         try {
             return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
         } catch (NoResultException nre) {
@@ -96,6 +105,7 @@ public class UserDao {
      * @param userEntity
      */
     public void deleteUser(final UserEntity userEntity) {
+        log.info("remove an user from the database");
         entityManager.remove(userEntity);
     }
 }
