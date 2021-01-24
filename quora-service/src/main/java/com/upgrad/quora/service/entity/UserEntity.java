@@ -1,9 +1,6 @@
 package com.upgrad.quora.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -51,14 +48,15 @@ public class UserEntity implements Serializable {
     @Size(max = 50)
     private String emailAddress;
 
-    //@ToStringExclude
+    @ToStringExclude
     @Column(name = "PASSWORD")
+    @NotNull
     private String password;
 
     @Column(name = "SALT")
     @NotNull
     @Size(max = 200)
-    //@ToStringExclude
+    @ToStringExclude
     private String salt;
 
     @Column(name = "COUNTRY")
