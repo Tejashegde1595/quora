@@ -7,6 +7,8 @@ import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +21,7 @@ import static com.upgrad.quora.service.common.GenericErrorCode.*;
 
 @Service
 public class UserBussinessService {
+    private final Logger log = LoggerFactory.getLogger(UserBussinessService.class);
 
     @Autowired
     private UserDao userDao;
@@ -26,29 +29,36 @@ public class UserBussinessService {
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
-    /** Business logic to create an user based on sign-up request details
+    /**
+     * Business logic to create an user based on sign-up request details
+     *
      * @param userEntity
      * @return
      * @throws SignUpRestrictedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signup(final UserEntity userEntity) throws SignUpRestrictedException {
+        log.debug("****** Starting signup ******");
         validateUserDetails(userEntity);
         String[] encryptedText = cryptographyProvider.encrypt(userEntity.getPassword());
         userEntity.setSalt(encryptedText[0]);
         userEntity.setPassword(encryptedText[1]);
-        return userDao.createUser(userEntity);
+        UserEntity user = userDao.createUser(userEntity);
+        log.debug("****** Ending signup ******");
+        return user;
 
     }
 
-    /** Business logic for signing-in an user based on authentication
+    /**
+     * Business logic for signing-in an user based on authentication
+     *
      * @param authorization
      * @return
      * @throws AuthenticationFailedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String authorization) throws AuthenticationFailedException {
-
+        log.debug("****** Starting authenticate ******");
         String username = "";
         String password = "";
         try {
@@ -58,25 +68,31 @@ public class UserBussinessService {
             username = decodedArray[0];
             password = decodedArray[1];
         } catch (Exception e) {
+            log.error("Invalid authentication token format");
             throw new AuthenticationFailedException(ATH_001.getCode(), ATH_001.getDefaultMessage());
 
         }
         UserEntity userEntity = userDao.getUserByUserName(username);
         if (userEntity == null) {
+            log.info("This username {} does not exist",username);
             throw new AuthenticationFailedException(ATH_001.getCode(), ATH_001.getDefaultMessage());
         }
-
+        UserAuthTokenEntity userAuthToken=null;
         final String encryptedPassword = cryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
-            UserAuthTokenEntity userAuthToken = createUserAuthToken(userEntity,encryptedPassword);
-            return userAuthToken;
+            log.info("Password validation successful for userName: {}",username);
+             userAuthToken = createUserAuthToken(userEntity, encryptedPassword);
         } else {
+            log.info("Invalid password for userName: {}",username);
             throw new AuthenticationFailedException(ATH_002.getCode(), ATH_002.getDefaultMessage());
         }
-
+        log.debug("****** Ending authenticate ******");
+        return userAuthToken;
     }
 
-    /** to create an user auth-token
+    /**
+     * to create an user auth-token
+     *
      * @param userEntity
      * @param secret
      * @return
@@ -92,10 +108,13 @@ public class UserBussinessService {
         userAuthToken.setExpiresAt(expiresAt);
         userAuthToken.setUuid(userEntity.getUuid());
         userDao.createAuthToken(userAuthToken);
+        log.debug("auth-token successfully created for userName {}", userEntity.getUserName());
         return userAuthToken;
     }
 
-    /** Business logic to logout an already signed in user
+    /**
+     * Business logic to logout an already signed in user
+     *
      * @param authorization
      * @return
      * @throws SignOutRestrictedException
@@ -103,7 +122,9 @@ public class UserBussinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signoutUser(final String authorization) throws SignOutRestrictedException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorization);
+
         if (userAuthToken.getLogoutAt() != null) {
+            log.info("User is already signed out at: {}", userAuthToken.getLogoutAt());
             throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         userAuthToken.setLogoutAt(ZonedDateTime.now());
@@ -113,7 +134,9 @@ public class UserBussinessService {
     }
 
 
-    /** To fetch user auth-token details
+    /**
+     * To fetch user auth-token details
+     *
      * @param authorizationToken
      * @return
      * @throws SignOutRestrictedException
@@ -122,13 +145,16 @@ public class UserBussinessService {
             SignOutRestrictedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if (userAuthTokenEntity == null) {
+            log.info("Invalid authorization token");
             throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         return userAuthTokenEntity;
     }
 
 
-    /** method to validate user data for sign-up request
+    /**
+     * method to validate user data for sign-up request
+     *
      * @param user
      * @throws SignUpRestrictedException
      */
@@ -137,11 +163,13 @@ public class UserBussinessService {
 
         UserEntity userEntity = userDao.getUserByUserName(user.getUserName());
         if (userEntity != null) {
+            log.info("This username {} is already taken", user.getUserName());
             throw new SignUpRestrictedException(SGUR_001.getCode(), SGUR_001.getDefaultMessage());
         }
 
         userEntity = userDao.getUserByEmail(user.getEmailAddress());
         if (userEntity != null) {
+            log.info("This email {} is already registered", user.getEmailAddress());
             throw new SignUpRestrictedException(SGUR_002.getCode(), SGUR_002.getDefaultMessage());
         }
 
