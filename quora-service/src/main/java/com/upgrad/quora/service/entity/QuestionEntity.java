@@ -39,13 +39,15 @@ public class QuestionEntity implements Serializable {
     private String content;
 
     @Column(name="DATE")
+    @NotNull
     private ZonedDateTime date;
 
 
     @ManyToOne
+    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID")
-    private UserEntity user;
+        private UserEntity user;
 
     public Integer getId() {
         return id;
