@@ -98,6 +98,7 @@ public class AnswerBusinessService {
             throw new AuthorizationFailedException(ATHR_003_COMMON.getCode(), ATHR_003_COMMON.getDefaultMessage());
         }
         existingAnswer.setAnswer(answerContent);
+        existingAnswer.setDate(ZonedDateTime.now());
         answerDao.updateAnswer(existingAnswer);
         log.debug("****** Ending editAnswer ******");
         return existingAnswer;
